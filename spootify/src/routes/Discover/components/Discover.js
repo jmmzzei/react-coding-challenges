@@ -21,17 +21,22 @@ export default class Discover extends Component {
     // en las peticiones.
     try {
       // Se hace uso del object destructuring
-      const {
-        data: { albums },
-      } = await makeRequest('new-releases')
-
-      const {
-        data: { playlists },
-      } = await makeRequest('featured-playlists')
-
-      const {
-        data: { categories },
-      } = await makeRequest('categories')
+      // Se realizan las peticiones de manera paralela con Promise.all()
+      let [
+        {
+          data: { playlists },
+        },
+        {
+          data: { albums },
+        },
+        {
+          data: { categories },
+        },
+      ] = await Promise.all([
+        makeRequest('featured-playlists'),
+        makeRequest('new-releases'),
+        makeRequest('categories'),
+      ])
 
       this.setState({
         playlists: playlists.items || [],
